@@ -1,0 +1,17 @@
+{
+	// Recommended VS Code Extensions:
+	// biomejs.biome: Provides linting, formatting, and code quality tools for JavaScript/TypeScript projects.
+	// eamodio.gitlens: Enhances Git capabilities in VS Code, including Git blame, history, and code authorship insights.
+	// bradlc.vscode-tailwindcss: Offers Tailwind CSS IntelliSense, autocomplete, syntax highlighting, and linting.
+	// streetsidesoftware.code-spell-checker: Checks for spelling errors in source code and comments.
+	// usernamehw.errorlens: Highlights errors and warnings inline in the editor for better visibility.
+	// mhutchie.git-graph: Visualizes Git repositories as interactive graphs for easier branch and commit management.
+	"recommendations": [
+		"biomejs.biome",
+		"eamodio.gitlens",
+		"bradlc.vscode-tailwindcss",
+		"streetsidesoftware.code-spell-checker",
+		"usernamehw.errorlens",
+		"mhutchie.git-graph"
+	]
+}
