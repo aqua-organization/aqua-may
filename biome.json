@@ -7,10 +7,15 @@
 		"useIgnoreFile": true
 	},
 
-	"files": {
-		"includes": ["apps/**/src", "packages/**/src"],
-		"ignoreUnknown": true
-	},
+        "files": {
+                "includes": [
+                        "apps/**/*.{ts,tsx,js,jsx,json}",
+                        "packages/**/*.{ts,tsx,js,jsx,json}",
+                        "turbo/**/*.{ts,tsx,js,jsx,json}",
+                        "*.{ts,tsx,js,jsx,json}"
+                ],
+                "ignoreUnknown": true
+        },
 
 	"formatter": {
 		"enabled": true,
