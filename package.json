@@ -19,6 +19,9 @@
       "node": ">=18"
    },
    "packageManager": "npm@10.9.3",
+   "overrides": {
+      "prettier": "npm:@biomejs/biome"
+   },
    "workspaces": [
       "apps/*",
       "packages/*"

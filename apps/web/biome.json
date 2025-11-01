@@ -1,10 +1,10 @@
 {
-      "extends": "//",
-      "linter": {
-            "rules": {
-                  "suspicious": {
-                        "noConsole": "warn"
-                  }
-            }
+   "extends": "//",
+   "linter": {
+      "rules": {
+         "suspicious": {
+            "noConsole": "warn"
+         }
       }
+   }
 }
