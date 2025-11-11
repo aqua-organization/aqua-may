@@ -1,0 +1,129 @@
+name: CI/CD - Staging Only
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop, staging]
+
+jobs:
+  # ==============================
+  # 1. SETUP & INSTALL JOB
+  # ==============================
+  setup-dependencies:
+    name: 1. Setup & Install Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node & Cache NPM
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+      - name: Install dependencies
+        run: npm install
+      - name: Save Turbo Cache
+        uses: actions/cache/save@v4
+        with:
+          path: .turbo
+          key: turbo-${{ github.sha }}
+
+  # ==============================
+  # 2. PARALLEL CI JOBS (Lint, Typecheck, Test)
+  # ==============================
+  lint:
+    name: 2.1. Lint & Format
+    runs-on: ubuntu-latest
+    needs: setup-dependencies
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Restore Turbo Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .turbo
+          key: turbo-${{ github.sha }}
+          restore-keys: turbo-
+      - run: npm install
+      - name: Run Biome lint (all workspaces)
+        run: npm run lint
+
+  typecheck:
+    name: 2.2. Type Check (Turbo)
+    runs-on: ubuntu-latest
+    needs: setup-dependencies
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Restore Turbo Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .turbo
+          key: turbo-${{ github.sha }}
+          restore-keys: turbo-
+      - run: npm install
+      - name: Run Turbo type-check
+        run: npm run check-types
+
+  test:
+    name: 2.3. Run Tests (API)
+    runs-on: ubuntu-latest
+    needs: setup-dependencies
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Restore Turbo Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .turbo
+          key: turbo-${{ github.sha }}
+          restore-keys: turbo-
+      - run: npm install
+      - name: Run API tests
+        run: npm --workspace apps/api run test
+
+  # ==============================
+  # 3. BUILD JOB
+  # ==============================
+  build:
+    name: 3. Build All Workspaces
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Restore Turbo Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .turbo
+          key: turbo-${{ github.sha }}
+          restore-keys: turbo-
+      - run: npm install
+      - name: Run Turbo build
+        run: npm run build
+
+  # ==============================
+  # 4. DEPLOYMENT STAGING (Auto Sync)
+  # ==============================
+  deploy-staging:
+    name: 4. Deploy to Staging (develop branch)
+    runs-on: ubuntu-latest
+    needs: [build] # Only deploy when build is successful
+    # Only deploy when pushing to the 'develop' branch and not a Pull Request
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push' 
+
+    steps:
+      - name: Deployment Trigger Success Check
+        run: |
+          echo "CI/CD successful for the develop branch."
+          echo "Render and Vercel are configured to automatically trigger deployment based on the successful 'build' job."
+          echo "Staging environment update should start shortly."
