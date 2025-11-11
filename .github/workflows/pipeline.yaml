@@ -120,10 +120,36 @@ jobs:
     needs: [build] # Only deploy when build is successful
     # Only deploy when pushing to the 'develop' branch and not a Pull Request
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push' 
+    permissions:
+      contents: write
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge develop into staging
+        run: |
+          git fetch origin develop staging || true
+          if git rev-parse --verify origin/staging >/dev/null 2>&1; then
+            git checkout -b staging origin/staging
+          else
+            echo "Staging branch does not exist, creating it from develop"
+            git checkout -b staging origin/develop
+          fi
+          git merge origin/develop --no-edit -m "chore: auto-merge develop into staging [skip ci]"
+          git push origin staging
+
       - name: Deployment Trigger Success Check
         run: |
           echo "CI/CD successful for the develop branch."
+          echo "develop branch has been automatically merged into staging."
           echo "Render and Vercel are configured to automatically trigger deployment based on the successful 'build' job."
           echo "Staging environment update should start shortly."
