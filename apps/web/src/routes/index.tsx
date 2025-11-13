@@ -23,7 +23,7 @@ function Index() {
                Edit <code className="bg-gray-100 px-2 py-1 rounded">src/routes/index.tsx</code> and save to test HMR
             </p>
          </div>
-         <p className="mt-4 text-gray-500">sBAC KIKI, NAM KIKI, TRUNG KIki</p>
+         <p className="mt-4 text-gray-500">BAC KIKI, NAM KIKI, TRUNG KIKI LA 1 NHA</p>
       </div>
    );
 }
