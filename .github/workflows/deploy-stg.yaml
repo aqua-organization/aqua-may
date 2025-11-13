@@ -1,0 +1,53 @@
+name: Deploy to Staging
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+    branches:
+      - develop
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    # Only deploy when CI workflow succeeds and it's a push event (not PR)
+    if: |
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'develop'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge develop into staging
+        run: |
+          git fetch origin develop staging || true
+          if git rev-parse --verify origin/staging >/dev/null 2>&1; then
+            git checkout -b staging origin/staging
+          else
+            echo "Staging branch does not exist, creating it from develop"
+            git checkout -b staging origin/develop
+          fi
+          git merge origin/develop --no-edit -m "chore: auto-merge develop into staging [skip ci]"
+          git push origin staging
+
+      - name: Deployment Trigger Success Check
+        run: |
+          echo "CI/CD successful for the develop branch."
+          echo "develop branch has been automatically merged into staging."
+          echo "Render and Vercel are configured to automatically trigger deployment based on the successful 'build' job."
+          echo "Staging environment update should start shortly."
+
