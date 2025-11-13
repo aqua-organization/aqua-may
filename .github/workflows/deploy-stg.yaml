@@ -36,10 +36,11 @@ jobs:
         run: |
           git fetch origin develop staging || true
           if git rev-parse --verify origin/staging >/dev/null 2>&1; then
-            git checkout -b staging origin/staging
+            # Use -B to force create/reset the branch
+            git checkout -B staging origin/staging
           else
             echo "Staging branch does not exist, creating it from develop"
-            git checkout -b staging origin/develop
+            git checkout -B staging origin/develop
           fi
           git merge origin/develop --no-edit -m "chore: auto-merge develop into staging [skip ci]"
           git push origin staging
