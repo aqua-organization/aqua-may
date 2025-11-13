@@ -26,6 +26,7 @@ function Index() {
 				Click the button above to increment the count
 				nam kiki
 				bac kiki
+				trung kiki
 			</p>
 		</div>
 	);
