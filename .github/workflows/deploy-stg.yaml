@@ -45,6 +45,36 @@ jobs:
           git merge origin/develop --no-edit -m "chore: auto-merge develop into staging [skip ci]"
           git push https://${{ secrets.DEPLOY_TOKEN }}@github.com/${{ github.repository }}.git staging
 
+      - name: Trigger Frontend Deployment
+        run: |
+          echo "Triggering frontend deployment on Render..."
+          response=$(curl -X POST -s -w "\n%{http_code}" "https://api.render.com/deploy/srv-d49gsg8gjchc73fcrua0?key=iWYsGX728j0")
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ] || [ "$http_code" -eq 202 ]; then
+            echo "Frontend deployment triggered successfully"
+            echo "Response: $body"
+          else
+            echo "Failed to trigger frontend deployment. HTTP Status: $http_code"
+            echo "Response: $body"
+            exit 1
+          fi
+
+      - name: Trigger Backend Deployment
+        run: |
+          echo "Triggering backend deployment on Render..."
+          response=$(curl -X POST -s -w "\n%{http_code}" "https://api.render.com/deploy/srv-d49fpsc9c44c73bl7ivg?key=TGCN5D8JYHc")
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ] || [ "$http_code" -eq 202 ]; then
+            echo "Backend deployment triggered successfully"
+            echo "Response: $body"
+          else
+            echo "Failed to trigger backend deployment. HTTP Status: $http_code"
+            echo "Response: $body"
+            exit 1
+          fi
+
       - name: Deployment Trigger Success Check
         run: |
           echo "CI/CD successful for the develop branch."
