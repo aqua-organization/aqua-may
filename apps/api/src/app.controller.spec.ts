@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello Nam ki ki, tao la ba ki ki, trung ki ki, aaaa"', () => {
-      expect(appController.getHello()).toBe('Hello Nam ki ki, tao la ba ki ki, trung ki ki, aaaa');
+    it('should return "Hello Nam ki ki, tao la ba ki ki, trung ki ki"', () => {
+      expect(appController.getHello()).toBe('Hello Nam ki ki, tao la ba ki ki, trung ki ki');
     });
   });
 });
