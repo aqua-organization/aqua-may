@@ -24,9 +24,6 @@ function Index() {
 			</div>
 			<p className="mt-4 text-gray-500">
 				Click the button above to increment the count
-				nam kiki
-				bac kiki
-				trung kiki
 			</p>
 		</div>
 	);
