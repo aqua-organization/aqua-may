@@ -48,7 +48,7 @@ jobs:
       - name: Trigger Frontend Deployment
         run: |
           echo "Triggering frontend deployment on Render..."
-          response=$(curl -X POST -s -w "\n%{http_code}" "https://api.render.com/deploy/srv-d49gsg8gjchc73fcrua0?key=iWYsGX728j0")
+          response=$(curl -X POST -s -w "\n%{http_code}" "${{ secrets.RENDER_FE_WEBHOOK_URL }}")
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | sed '$d')
           if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ] || [ "$http_code" -eq 202 ]; then
@@ -63,7 +63,7 @@ jobs:
       - name: Trigger Backend Deployment
         run: |
           echo "Triggering backend deployment on Render..."
-          response=$(curl -X POST -s -w "\n%{http_code}" "https://api.render.com/deploy/srv-d49fpsc9c44c73bl7ivg?key=TGCN5D8JYHc")
+          response=$(curl -X POST -s -w "\n%{http_code}" "${{ secrets.RENDER_BE_WEBHOOK_URL }}")
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | sed '$d')
           if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ] || [ "$http_code" -eq 202 ]; then
